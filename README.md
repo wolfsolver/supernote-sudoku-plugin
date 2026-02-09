@@ -8,6 +8,10 @@ A smooth and high-performance plugin for **Supernote** devices, designed to gene
 * **Seamless Integration**: Inserts the generated Sudoku directly into the current note page with a single click.
 * **Timestamped**: Each puzzle includes the exact date and time of generation (DD/MM/YYYY hh:mm:ss) to help you track your progress.
 
+### Screenshot
+* ![Inside Plugin](/blob/main/screenshot/20260209_174117.png)
+* ![Result](/blob/main/screenshot/20260209_174150.png)
+
 ## 🛠️ Technical Architecture
 The project leverages a hybrid architecture to maximize performance on Supernote hardware:
 1. **Frontend**: React Native (TSX) for a clean and responsive user interface.
