@@ -6,7 +6,6 @@ A smooth and high-performance plugin for **Supernote** devices, designed to gene
 * **Infinite Generation**: Fetches fresh puzzles anytime via the Dosuku API.
 * **Native Rendering**: Utilizes a custom **Android Kotlin** module to draw the grid, ensuring maximum sharpness and clarity on E-ink displays.
 * **Seamless Integration**: Inserts the generated Sudoku directly into the current note page with a single click.
-* **Timestamped**: Each puzzle includes the exact date and time of generation (DD/MM/YYYY hh:mm:ss) to help you track your progress.
 
 ### Screenshot
 * ![Inside Plugin](https://raw.githubusercontent.com/wolfsolver/supernote-sudoku-plugin/refs/heads/main/screenshot/20260209_174117.png)
