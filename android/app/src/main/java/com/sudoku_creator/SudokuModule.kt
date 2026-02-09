@@ -18,8 +18,12 @@ class SudokuModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
             val canvas = Canvas(bitmap)
             val paint = Paint()
 
-            // Sfondo Bianco
-            canvas.drawColor(Color.WHITE)
+			// --- AGGIUNGI/CONTROLLA QUESTE RIGHE ---
+			// 0. Riempimento totale sfondo bianco (Rimuove la trasparenza)
+			paint.style = Paint.Style.FILL
+			paint.color = Color.rgb(250, 250, 250)
+			canvas.drawRect(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat(), paint)
+			// ---------------------------------------
 
             // Configurazione Testo e Linee
             paint.color = Color.BLACK

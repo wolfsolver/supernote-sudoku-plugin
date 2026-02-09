@@ -2,10 +2,10 @@
     "pluginID":  "9q2xneonk72lzjx5",
     "pluginKey":  "sudoku_creator",
     "iconPath":  "./assets/sudoku.png",
-    "desc":  "Sudoku Creator",
+    "desc":  "Sudoku Creator\n\nA smooth and powerful plugin for Supernote devices, designed to generate instant Sudoku puzzles and insert them directly into your notes as PNG images.\n\nPowered by Wolfsolver\nwebsite: https://github.com/wolfsolver/supernote-sudoku-plugin",
     "name":  "sudoku_creator",
-    "versionCode":  "1",
-    "versionName":  "0.0.1",
+    "versionCode":  "2",
+    "versionName":  "0.0.2",
     "jsMainPath":  "index",
 	"author": "Wolfsolver"
 }

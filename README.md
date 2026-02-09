@@ -1,29 +1,34 @@
 # Supernote Sudoku Maker 🧩
 
-Un plugin fluido e performante per dispositivi **Supernote**, progettato per generare puzzle Sudoku istantanei e inserirli direttamente nelle tue note come immagini PNG.
+A smooth and high-performance plugin for **Supernote** devices, designed to generate instant Sudoku puzzles and insert them directly into your notes as PNG images.
 
-## ✨ Caratteristiche
-* **Generazione Infinita**: Recupera puzzle sempre nuovi tramite l'API Dosuku.
-* **Rendering Nativo**: Utilizza un modulo **Android Kotlin** personalizzato per disegnare la griglia, garantendo massima nitidezza sui display E-ink.
-* **Integrazione Totale**: Inserisce il Sudoku generato direttamente nella pagina della nota corrente con un solo clic.
-* **Timestamp**: Ogni puzzle include data e ora di generazione (DD/MM/YYYY hh:mm:ss) per tracciare i tuoi progressi.
+## ✨ Features
+* **Infinite Generation**: Fetches fresh puzzles anytime via the Dosuku API.
+* **Native Rendering**: Utilizes a custom **Android Kotlin** module to draw the grid, ensuring maximum sharpness and clarity on E-ink displays.
+* **Seamless Integration**: Inserts the generated Sudoku directly into the current note page with a single click.
+* **Timestamped**: Each puzzle includes the exact date and time of generation (DD/MM/YYYY hh:mm:ss) to help you track your progress.
 
-## 🛠️ Architettura Tecnica
-Il progetto sfrutta un'architettura ibrida per massimizzare le prestazioni sull'hardware Supernote:
-1. **Frontend**: React Native (TSX) per un'interfaccia utente reattiva e pulita.
-2. **Bridge Nativo**: Un modulo Kotlin (`SudokuNative`) che gestisce:
-   - La creazione di una `Bitmap` Android.
-   - Il disegno vettoriale della griglia e dei numeri.
-   - Il salvataggio efficiente nel filesystem locale (`/storage/emulated/0/Note/...`).
-3. **API**: Integrazione con `sn-plugin-lib` per la comunicazione con il sistema operativo del dispositivo.
+## 🛠️ Technical Architecture
+The project leverages a hybrid architecture to maximize performance on Supernote hardware:
+1. **Frontend**: React Native (TSX) for a clean and responsive user interface.
+2. **Native Bridge**: A custom Kotlin module (`SudokuNative`) that handles:
+   - Android `Bitmap` creation.
+   - Vector drawing of the grid and numbers.
+   - Solid background rendering (anti-transparency) for better E-ink visibility.
+   - Efficient saving to the local filesystem (`/storage/emulated/0/Note/...`).
+3. **API**: Integration with `sn-plugin-lib` for device-level communication and image insertion.
 
 
-## Prerequisiti
-* **Android SDK** & **JDK 17** (configurata via `JAVA_HOME`).
-* Supernote Plugin Toolchain installata.
+## 📋 Prerequisites
+* **Android SDK** & **JDK 17** (configured via `JAVA_HOME`).
+* Supernote Plugin Toolchain installed.
 
-# 📖 Utilizzo
-- Apri una nota sul tuo Supernote.
-- Avvia il plugin Sudoku Maker.
-- Clicca su NUOVO SUDOKU per caricare una sfida.
-- Clicca su INSERISCI NELLA NOTA. Il plugin genererà il PNG, lo salverà e lo posizionerà automaticamente sulla tua pagina.
+## 🚀 How to Use
+1. Open a note on your Supernote device.
+2. Launch the **Sudoku Maker** plugin.
+3. Click **NEW SUDOKU** to load a challenge.
+4. Click **INSERT INTO NOTE**. The plugin will generate the PNG, save it, and automatically place it on your current page.
+
+## 🤝 Contributing
+Contributions are welcome! If you have ideas for new grid layouts or advanced features, feel free to open an Issue or a Pull Request.
+
