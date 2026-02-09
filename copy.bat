@@ -1,0 +1,1 @@
+adb push .\build\outputs\sudoku_creator.snplg /storage/self/primary/Mystyle/Plugin/

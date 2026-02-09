@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "html2canvas": "^1.4.1",
     "react": "19.0.0",
     "react-native": "0.79.2",
     "sn-plugin-lib": "^0.1.19"

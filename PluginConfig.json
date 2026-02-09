@@ -1,0 +1,11 @@
+﻿{
+    "pluginID":  "9q2xneonk72lzjx5",
+    "pluginKey":  "sudoku_creator",
+    "iconPath":  "./assets/sudoku.png",
+    "desc":  "Sudoku Creator",
+    "name":  "sudoku_creator",
+    "versionCode":  "1",
+    "versionName":  "0.0.1",
+    "jsMainPath":  "index",
+	"author": "Wolfsolver"
+}

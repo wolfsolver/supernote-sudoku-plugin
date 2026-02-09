@@ -1,3 +1,13 @@
+node_modules/
+.bundle/
+build/
+android/.gradle/
+android/app/build/
+.DS_Store
+*.swp
+
+
+
 # OSX
 #
 .DS_Store
