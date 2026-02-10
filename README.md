@@ -7,17 +7,18 @@ A smooth and high-performance plugin for **Supernote** devices, designed to gene
 * **Native Rendering**: Utilizes a custom **Android Kotlin** module to draw the grid, ensuring maximum sharpness and clarity on E-ink displays.
 * **Seamless Integration**: Inserts the generated Sudoku directly into the current note page with a single click.
 * **Timestamped**: Each puzzle includes the exact date and time of generation (DD/MM/YYYY hh:mm:ss) to help you track your progress.
+* **Multilingual Support**: Includes a built-in language selector (EN/IT/CN) to adapt the interface to your preference.
+  - [ ] prepare crowdin project for transation
 
 ## 🛠️ Technical Architecture
 The project leverages a hybrid architecture to maximize performance on Supernote hardware:
-1. **Frontend**: React Native (TSX) for a clean and responsive user interface.
+1. **Frontend**: React Native (TSX) with a custom localization helper for multi-language support.
 2. **Native Bridge**: A custom Kotlin module (`SudokuNative`) that handles:
    - Android `Bitmap` creation.
    - Vector drawing of the grid and numbers.
    - Solid background rendering (anti-transparency) for better E-ink visibility.
    - Efficient saving to the local filesystem (`/storage/emulated/0/Note/...`).
 3. **API**: Integration with `sn-plugin-lib` for device-level communication and image insertion.
-
 
 ## 📋 Prerequisites
 * **Android SDK** & **JDK 17** (configured via `JAVA_HOME`).

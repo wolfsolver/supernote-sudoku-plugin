@@ -1,0 +1,10 @@
+{
+    "close": "CHIUDI",
+    "newSudoku": "NUOVO SUDOKU",
+    "insertNote": "INSERISCI NELLA NOTA",
+    "processing": "ELABORAZIONE...",
+    "loadingGrid": "Generazione griglia...",
+    "level": "LIVELLO",
+    "errorConn": "Impossibile creare il Sudoku. Sei connesso a internet?",
+    "success": "Inserimento completato con successo!"
+  }

@@ -1,0 +1,10 @@
+{
+    "close": "关闭",
+    "newSudoku": "新数独",
+    "insertNote": "插入笔记",
+    "processing": "处理中...",
+    "loadingGrid": "正在生成网格...",
+    "level": "难度",
+    "errorConn": "无法创建数独。请检查您的网络连接。",
+    "success": "成功插入笔记！"
+}

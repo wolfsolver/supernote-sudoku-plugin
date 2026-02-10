@@ -1,0 +1,10 @@
+{
+    "close": "CLOSE",
+    "newSudoku": "NEW SUDOKU",
+    "insertNote": "INSERT INTO NOTE",
+    "processing": "PROCESSING...",
+    "loadingGrid": "Generating grid...",
+    "level": "LEVEL",
+    "errorConn": "Unable to create Sudoku. Are you connected to internet?",
+    "success": "Insertion completed successfully!"
+}
