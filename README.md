@@ -10,6 +10,10 @@ A smooth and high-performance plugin for **Supernote** devices, designed to gene
 * **Multilingual Support**: Includes a built-in language selector (EN/IT/CN) to adapt the interface to your preference.
   - [ ] prepare crowdin project for transation
 
+### Screenshot
+* ![Inside Plugin](https://raw.githubusercontent.com/wolfsolver/supernote-sudoku-plugin/refs/heads/main/screenshot/20260209_174117.png)
+* ![Result in Note](https://raw.githubusercontent.com/wolfsolver/supernote-sudoku-plugin/refs/heads/main/screenshot/20260209_174150.png)
+
 ## 🛠️ Technical Architecture
 The project leverages a hybrid architecture to maximize performance on Supernote hardware:
 1. **Frontend**: React Native (TSX) with a custom localization helper for multi-language support.
