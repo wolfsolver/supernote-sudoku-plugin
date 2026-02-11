@@ -1,172 +1,268 @@
-﻿/**
- * Simple Plugin
- *
- * @format
- */
-
-import React from 'react';
-import {
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  Pressable,
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  ScrollView, 
+  Pressable, 
+  StyleSheet, 
+  ActivityIndicator, 
+  NativeModules 
 } from 'react-native';
-import { PluginManager, PluginCommAPI, PluginFileAPI } from 'sn-plugin-lib';
-import html2canvas from 'html2canvas';
+import { PluginManager, PluginNoteAPI } from 'sn-plugin-lib';
+import config from './PluginConfig.json';
 
-/**
- * Plugin View
- * Displays Hello World text in the center of the screen
- */
-function App(): React.JSX.Element {
-  const [grid, setGrid] = useState(null);
-  const [loading, setLoading] = useState(false);
+// Language Assets
+import en from './i18n/en.json';
+import it from './i18n/it.json';
+import cn from './i18n/cn.json';
+
+// Map translations and define supported languages
+const translations = { en, it, cn };
+type Language = 'en' | 'it' | 'cn';
+
+const BG = '#FFFFFF';
+const { SudokuNative } = NativeModules;
+
+export default function Sudoku() {
+  // Application State
+  const [lang, setLang] = useState<Language>('en');
+  const [grid, setGrid] = useState<number[][] | null>(null);
   const [gameInfo, setGameInfo] = useState({ level: '', date: '' });
-  const [showModal, setShowModal] = useState(true);
-  
-  // Usiamo un ref per l'elemento DOM da catturare
-  const sudokuRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // Translation shortcut
+  const t = translations[lang];
+
+  // Startup: verify native bridge and fetch first puzzle
+  useEffect(() => {
+    console.log("[SUDOKU] App started");
+    if (SudokuNative) {
+      console.log("[SUDOKU] SUCCESS: SudokuNative native bridge ready.");
+    } else {
+      console.warn("[SUDOKU] WARNING: Native bridge not found.");
+    }
+    fetchSudoku();
+  }, []);
+
+  // Helper to get formatted timestamp
+  const getFormattedDate = () => {
+    const now = new Date();
+    const date = now.toLocaleDateString('it-IT'); // Keeping DD/MM/YYYY format
+    const time = now.toLocaleTimeString('it-IT', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit' 
+    });
+    return `${date} ${time}`;
+  }
+
+  // Fetch puzzle from Dosuku API
   const fetchSudoku = async () => {
     setLoading(true);
-    setShowModal(false);
+    setError(null);
     try {
       const response = await fetch('https://sudoku-api.vercel.app/api/dosuku');
+      if (!response.ok) throw new Error();
       const data = await response.json();
       const puzzle = data.newboard.grids[0];
-
+      
       setGrid(puzzle.value);
       setGameInfo({
         level: puzzle.difficulty,
-        date: new Date().toLocaleDateString('it-IT', { 
-          day: '2-digit', month: '2-digit', year: 'numeric' 
-        })
+        date: getFormattedDate()
       });
-    } catch (error) {
-      console.error("Errore API:", error);
+    } catch (e: any) {
+      console.error("[SUDOKU] Fetch Error: " + e.message);
+      setError(t.errorConn);
     } finally {
       setLoading(false);
     }
   };
 
-  const exportImage = async () => {
-    if (sudokuRef.current) {
-      // html2canvas lavora sul DOM reale
-      const canvas = await html2canvas(sudokuRef.current, {
-        backgroundColor: BG,
-        scale: 2 // Migliore qualità per l'e-ink di Supernote
-      });
+  // Export grid to PNG via Kotlin and insert into Supernote Note
+  const handleExportToNote = async () => {
+    if (!grid || !SudokuNative) {
+      console.error("[SUDOKU] Export impossible: missing data or bridge");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log("[SUDOKU] Starting native generation...");
       
-      const imageData = canvas.toDataURL('image/png');
-      // Qui potresti usare PluginFileAPI per salvare su Supernote
-      const link = document.createElement('a');
-      link.download = `sudoku_${gameInfo.level}.png`;
-      link.href = imageData;
-      link.click();
+      // 1. Generate PNG using the custom Android module
+      const pathGenerated = await SudokuNative.generateAndSaveSudoku(
+        grid, 
+        gameInfo.level, 
+        gameInfo.date
+      );
+
+      console.log("[SUDOKU] Image saved at: " + pathGenerated);
+
+      // 2. Insert the file into the current note
+      const res = await PluginNoteAPI.insertImage(pathGenerated);
+      
+      if (res.success) {
+        console.log("[SUDOKU] Insertion completed successfully!");
+        PluginManager.closePluginView();
+      } else {
+        console.error("[SUDOKU] Note API Error: " + res.error?.message);
+      }
+    } catch (e: any) {
+      console.error("[SUDOKU] Native process error: " + e.message);
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Sudoku Generator</Text>
-        <Pressable onPress={() => PluginManager.closePluginView()} style={styles.button}>
-          <Text style={styles.buttonText}>Chiudi</Text>
-        </Pressable>		
-        <Pressable style={styles.button} onClick={() => setShowModal(true)}>
-          <Text style={styles.buttonText}>Nuovo Gioco</Text>
+    <View style={styles.root}>
+      {/* Header Buttons */}
+      <View style={styles.buttonRow}>
+        <Pressable 
+          onPress={() => PluginManager.closePluginView()} 
+          style={[styles.topButton, { flex: 1, marginRight: 5 }]}
+        >
+          <Text style={styles.buttonText}>{t.close}</Text>
+        </Pressable>
+
+        <Pressable 
+          onPress={fetchSudoku} 
+          style={[styles.topButton, { flex: 2 }]} 
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "..." : t.newSudoku}
+          </Text>
         </Pressable>
       </View>
 
-      {showModal && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Scegli Difficoltà</Text>
-            <Pressable style={styles.levelBtn} onClick={fetchSudoku}>
-              <Text style={styles.levelBtnText}>Genera Sudoku</Text>
-            </Pressable>
+      {/* Primary Action Button */}
+      <Pressable 
+        onPress={handleExportToNote} 
+        style={[styles.exportButton, (loading || !grid) && styles.disabledButton]}
+        disabled={loading || !grid}
+      >
+        <Text style={styles.exportButtonText}>
+          {loading ? t.processing : t.insertNote}
+        </Text>
+      </Pressable>
+
+      {/* Connectivity Error Message */}
+      {error && !loading && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
+      <ScrollView contentContainerStyle={styles.center}>
+        {loading && !grid ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#000" />
+            <Text style={styles.loadingText}>{t.loadingGrid}</Text>
           </View>
-        </View>
-      )}
+        ) : grid && (
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <Text style={styles.infoText}>{t.level}: {gameInfo.level.toUpperCase()}</Text>
+              <Text style={styles.infoText}>{gameInfo.date}</Text>
+            </View>
 
-      {loading && <ActivityIndicator size="large" color="#000" />}
-
-      {grid && (
-        <View style={styles.captureWrapper}>
-          {/* L'attributo ref e lo stile inline sono per html2canvas */}
-          <div ref={sudokuRef} style={{ padding: '20px', backgroundColor: BG }}>
-            <div style={styles.infoRow}>
-              <span style={styles.infoText}>LIVELLO: {gameInfo.level.toUpperCase()}</span>
-              <span style={styles.infoText}>{gameInfo.date}</span>
-            </div>
-            
-            <div style={styles.grid}>
+            {/* Sudoku Grid Rendering */}
+            <View style={styles.gridBoard}>
               {grid.map((row, i) => (
-                row.map((cell, j) => (
-                  <div 
-                    key={`${i}-${j}`} 
-                    style={{
-                      ...styles.cell,
-                      borderBottom: (i + 1) % 3 === 0 && i < 8 ? '2px solid black' : '0.5px solid #ccc',
-                      borderRight: (j + 1) % 3 === 0 && j < 8 ? '2px solid black' : '0.5px solid #ccc',
-                      borderTop: i === 0 ? '2px solid black' : '',
-                      borderLeft: j === 0 ? '2px solid black' : '',
-                      borderBottomColor: i === 8 ? '2px solid black' : (i + 1) % 3 === 0 ? 'black' : '#ccc',
-                      borderRightColor: j === 8 ? '2px solid black' : (j + 1) % 3 === 0 ? 'black' : '#ccc'
-                    }}
-                  >
-                    {cell !== 0 ? cell : ''}
-                  </div>
-                ))
+                <View key={`row-${i}`} style={styles.row}>
+                  {row.map((cell, j) => (
+                    <View 
+                      key={`cell-${i}-${j}`} 
+                      style={[
+                        styles.cell,
+                        {
+                          borderBottomWidth: (i + 1) % 3 === 0 && i < 8 ? 3 : 1,
+                          borderRightWidth: (j + 1) % 3 === 0 && j < 8 ? 3 : 1,
+                        }
+                      ]}
+                    >
+                      <Text style={styles.cellText}>{cell !== 0 ? cell : ''}</Text>
+                    </View>
+                  ))}
+                </View>
               ))}
-            </div>
-          </div>
-
-          <Pressable style={styles.exportBtn} onClick={exportImage}>
-            <Text style={styles.buttonText}>Esporta PNG</Text>
-          </Pressable>
-        </View>
-      )}
-    </ScrollView>  
+            </View>
+            
+            {/* Footer with Metadata and Dynamic Language Selector */}
+            <View style={styles.footerContainer}>
+              <Text style={styles.footer}>
+                {config.name} v{config.versionName} by {config.author}
+              </Text>
+              
+              <View style={styles.langSelector}>
+                {Object.keys(translations).map((l, index) => (
+                  <React.Fragment key={l}>
+                    <Pressable onPress={() => setLang(l as Language)}>
+                      <Text style={[styles.langText, lang === l && styles.activeLang]}>
+                        {l.toUpperCase()}
+                      </Text>
+                    </Pressable>
+                    {index < Object.keys(translations).length - 1 && (
+                      <Text style={styles.langSeparator}> | </Text>
+                    )}
+                  </React.Fragment>
+                ))}
+              </View>
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-container: { flex: 1, backgroundColor: BG, padding: 20 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  title: { fontSize: 22, fontWeight: 'bold' },
-  button: { backgroundColor: '#000', padding: 10, borderRadius: 5 },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
-  
-  modalOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 10 },
-  modalContent: { backgroundColor: '#fff', padding: 40, borderRadius: 10, alignItems: 'center' },
-  modalTitle: { fontSize: 18, marginBottom: 20, fontWeight: 'bold' },
-  levelBtn: { backgroundColor: '#000', padding: 15, borderRadius: 5, marginBottom: 10, width: 200 },
-  levelBtnText: { color: '#fff', textAlign: 'center' },
-
-  captureWrapper: { alignItems: 'center', marginTop: 20 },
-  infoRow: { display: 'flex', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid black', paddingBottom: 5 },
-  infoText: { fontSize: '12px', fontWeight: 'bold', fontFamily: 'monospace' },
-  
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(9, 40px)',
-    gridTemplateRows: 'repeat(9, 40px)',
-    backgroundColor: '#fff',
-  },
-  cell: {
-    width: '40px',
-    height: '40px',
-    display: 'flex',
+  root: { flex: 1, backgroundColor: BG, padding: 15 },
+  buttonRow: { flexDirection: 'row', marginBottom: 10 },
+  topButton: { 
+    borderWidth: 2, 
+    borderColor: '#000', 
+    padding: 12, 
     alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '18px',
-    fontWeight: 'bold',
-    color: '#000'
+    backgroundColor: '#F0F0F0'
   },
-  exportBtn: { marginTop: 20, backgroundColor: '#2ecc71', padding: 15, borderRadius: 5 }
+  exportButton: {
+    borderWidth: 3, 
+    borderColor: '#000', 
+    padding: 18, 
+    marginBottom: 20, 
+    alignItems: 'center', 
+    backgroundColor: '#000' 
+  },
+  exportButtonText: { color: '#FFF', fontWeight: 'bold', fontSize: 20 },
+  disabledButton: { opacity: 0.5 },
+  buttonText: { color: '#000', fontWeight: 'bold', fontSize: 16 },
+  center: { alignItems: 'center' },
+  container: { alignItems: 'center' },
+  loadingContainer: { marginTop: 100, alignItems: 'center' },
+  loadingText: { marginTop: 15, fontSize: 18, fontWeight: 'bold' },
+  errorContainer: {
+    marginTop: 15,
+    backgroundColor: '#222222',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 4,
+    alignSelf: 'center',
+  },
+  errorText: { fontSize: 18, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', width: 576, marginBottom: 10 },
+  infoText: { fontSize: 16, fontWeight: 'bold' },
+  gridBoard: { borderWidth: 3, borderColor: '#000' },
+  row: { flexDirection: 'row' },
+  cell: { width: 64, height: 64, justifyContent: 'center', alignItems: 'center', borderColor: '#000' },
+  cellText: { fontSize: 36, fontWeight: 'bold', color: '#000' },
+  footerContainer: { marginTop: 20, alignItems: 'center' },
+  footer: { fontSize: 16, fontStyle: 'italic', color: '#666' },
+  langSelector: { flexDirection: 'row', marginTop: 10 },
+  langText: { fontSize: 16, color: '#666' },
+  activeLang: { fontWeight: 'bold', color: '#000', textDecorationLine: 'underline' },
+  langSeparator: { fontSize: 16, color: '#666' }
 });
-
-export default App;

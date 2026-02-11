@@ -1,11 +1,18 @@
-node_modules/
+*.apk
+*.jsbundle
+*.log
+*.swp
+.DS_Store
 .bundle/
-build/
+.eslintcache
+.idea/
+.vscode/
+Thumbs.db
 android/.gradle/
 android/app/build/
-.DS_Store
-*.swp
-
+build/
+dist/
+node_modules/
 
 
 # OSX
