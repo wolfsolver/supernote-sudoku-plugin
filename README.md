@@ -2,7 +2,7 @@
 
 A smooth and high-performance plugin for **Supernote** devices, designed to generate instant Sudoku puzzles and insert them directly into your notes as PNG images.
 
-**Supernote** is a professional 'Digital Paper' (E-Ink tablet) focused on focus-driven productivity and handwriting, allowing for a seamless integration between digital ink and modern workflows. Learn more at [supernote.com](https://supernote.com).
+> **Supernote** is a next-generation E-Ink device designed to provide a natural, distraction-free writing experience, blending the tactile feel of traditional paper with the digital versatility of an Android-based tablet. For more info, visit [supernote.com](https://supernote.com).
 
 ## ✨ Features
 * **Infinite Generation**: Fetches fresh puzzles anytime via the Dosuku API.
