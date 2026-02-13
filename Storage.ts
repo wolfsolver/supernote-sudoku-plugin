@@ -7,7 +7,7 @@ import { PluginManager } from 'sn-plugin-lib';
 const CONFIG_FILE = 'settings.json';
 
 // Helper to get the correct path string by awaiting the Promise
-const getDirPath = async () => {
+export const getDirPath = async () => {
   try {
     // Since documentation says it's a Promise<string>, we MUST await it
     const path = await PluginManager.getPluginDirPath();

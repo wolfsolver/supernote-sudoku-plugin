@@ -11,7 +11,7 @@ class SudokuModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     override fun getName(): String = "SudokuNative"
 
     @ReactMethod
-    fun generateAndSaveSudoku(gridArray: ReadableArray, difficulty: String, date: String, promise: Promise) {
+    fun generateAndSaveSudoku(fullPath: String, gridArray: ReadableArray, difficulty: String, date: String, promise: Promise) {
         try {
             val size = 600
             val bitmap = Bitmap.createBitmap(size, size + 150, Bitmap.Config.ARGB_8888)
@@ -73,7 +73,7 @@ class SudokuModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
             }
 
             // 4. SALVATAGGIO FILE
-            val path = "/storage/emulated/0/Note/SudokuImg/sudoku_export.png"
+            val path = fullPath
             val file = File(path)
             file.parentFile?.mkdirs()
             

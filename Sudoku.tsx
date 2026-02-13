@@ -11,6 +11,7 @@ import {
 import { PluginManager, PluginNoteAPI } from 'sn-plugin-lib';
 import { useTranslation } from 'react-i18next'; // <--- NEW
 import config from './PluginConfig.json';
+import { getDirPath } from './Storage'; // Import the helper
 
 const BG = '#FFFFFF';
 const { SudokuNative } = NativeModules;
@@ -26,11 +27,11 @@ export default function Sudoku() {
 
   // Startup: verify native bridge and fetch first puzzle
   useEffect(() => {
-    console.log("[SUDOKU] App started");
+    console.log("[SUDOKU/App] App started");
     if (SudokuNative) {
-      console.log("[SUDOKU] SUCCESS: SudokuNative native bridge ready.");
+      console.log("[SUDOKU/App] SUCCESS: SudokuNative native bridge ready.");
     } else {
-      console.warn("[SUDOKU] WARNING: Native bridge not found.");
+      console.warn("[SUDOKU/App] WARNING: Native bridge not found.");
     }
     fetchSudoku();
   }, []);
@@ -63,7 +64,7 @@ export default function Sudoku() {
         date: getFormattedDate()
       });
     } catch (e: any) {
-      console.error("[SUDOKU] Fetch Error: " + e.message);
+      console.error("[SUDOKU/App] Fetch Error: " + e.message);
       setError(t('errorConn'));
     } finally {
       setLoading(false);
@@ -73,34 +74,43 @@ export default function Sudoku() {
   // Export grid to PNG via Kotlin and insert into Supernote Note
   const handleExportToNote = async () => {
     if (!grid || !SudokuNative) {
-      console.error("[SUDOKU] Export impossible: missing data or bridge");
+      console.error("[SUDOKU/App] Export impossible: missing data or bridge");
       return;
     }
 
     setLoading(true);
     try {
-      console.log("[SUDOKU] Starting native generation...");
+      console.log("[SUDOKU/App] Starting native generation...");
       
       // 1. Generate PNG using the custom Android module
+	  let dirPath = await getDirPath();
+	  if (!dirPath) {
+		console.warn('[SUDOKU/App]: Private path not found, using public fallback');
+	    dirPath = '/storage/emulated/0/Note/SudokuImg';
+	  }
+		
+	  const fullPath = `${dirPath}/sudoku_export.png`;
+	  
       const pathGenerated = await SudokuNative.generateAndSaveSudoku(
+		fullPath,
         grid, 
         gameInfo.level, 
         gameInfo.date
       );
 
-      console.log("[SUDOKU] Image saved at: " + pathGenerated);
+      console.log("[SUDOKU/App] Image saved at: " + pathGenerated);
 
       // 2. Insert the file into the current note
       const res = await PluginNoteAPI.insertImage(pathGenerated);
       
       if (res.success) {
-        console.log("[SUDOKU] Insertion completed successfully!");
+        console.log("[SUDOKU/App] Insertion completed successfully!");
         PluginManager.closePluginView();
       } else {
-        console.error("[SUDOKU] Note API Error: " + res.error?.message);
+        console.error("[SUDOKU/App] Note API Error: " + res.error?.message);
       }
     } catch (e: any) {
-      console.error("[SUDOKU] Native process error: " + e.message);
+      console.error("[SUDOKU/App] Native process error: " + e.message);
     } finally {
       setLoading(false);
     }
