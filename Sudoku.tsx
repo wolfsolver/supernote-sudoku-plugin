@@ -9,30 +9,20 @@ import {
   NativeModules 
 } from 'react-native';
 import { PluginManager, PluginNoteAPI } from 'sn-plugin-lib';
+import { useTranslation } from 'react-i18next'; // <--- NEW
 import config from './PluginConfig.json';
-
-// Language Assets
-import en from './i18n/en.json';
-import it from './i18n/it.json';
-import cn from './i18n/cn.json';
-
-// Map translations and define supported languages
-const translations = { en, it, cn };
-type Language = 'en' | 'it' | 'cn';
 
 const BG = '#FFFFFF';
 const { SudokuNative } = NativeModules;
 
 export default function Sudoku() {
+  const { t } = useTranslation(); // <--- NEW: t is now global
+  
   // Application State
-  const [lang, setLang] = useState<Language>('en');
   const [grid, setGrid] = useState<number[][] | null>(null);
   const [gameInfo, setGameInfo] = useState({ level: '', date: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Translation shortcut
-  const t = translations[lang];
 
   // Startup: verify native bridge and fetch first puzzle
   useEffect(() => {
@@ -74,7 +64,7 @@ export default function Sudoku() {
       });
     } catch (e: any) {
       console.error("[SUDOKU] Fetch Error: " + e.message);
-      setError(t.errorConn);
+      setError(t('errorConn'));
     } finally {
       setLoading(false);
     }
@@ -124,7 +114,7 @@ export default function Sudoku() {
           onPress={() => PluginManager.closePluginView()} 
           style={[styles.topButton, { flex: 1, marginRight: 5 }]}
         >
-          <Text style={styles.buttonText}>{t.close}</Text>
+          <Text style={styles.buttonText}>{t('close')}</Text>
         </Pressable>
 
         <Pressable 
@@ -133,7 +123,7 @@ export default function Sudoku() {
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? "..." : t.newSudoku}
+            {loading ? "..." : t('newSudoku')}
           </Text>
         </Pressable>
       </View>
@@ -145,7 +135,7 @@ export default function Sudoku() {
         disabled={loading || !grid}
       >
         <Text style={styles.exportButtonText}>
-          {loading ? t.processing : t.insertNote}
+          {loading ? t('processing') : t('insertNote')}
         </Text>
       </Pressable>
 
@@ -160,12 +150,12 @@ export default function Sudoku() {
         {loading && !grid ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#000" />
-            <Text style={styles.loadingText}>{t.loadingGrid}</Text>
+            <Text style={styles.loadingText}>{t('loadingGrid')}</Text>
           </View>
         ) : grid && (
           <View style={styles.container}>
             <View style={styles.header}>
-              <Text style={styles.infoText}>{t.level}: {gameInfo.level.toUpperCase()}</Text>
+              <Text style={styles.infoText}>{t('level')}: {gameInfo.level.toUpperCase()}</Text>
               <Text style={styles.infoText}>{gameInfo.date}</Text>
             </View>
 
@@ -197,20 +187,6 @@ export default function Sudoku() {
                 {config.name} v{config.versionName} by {config.author}
               </Text>
               
-              <View style={styles.langSelector}>
-                {Object.keys(translations).map((l, index) => (
-                  <React.Fragment key={l}>
-                    <Pressable onPress={() => setLang(l as Language)}>
-                      <Text style={[styles.langText, lang === l && styles.activeLang]}>
-                        {l.toUpperCase()}
-                      </Text>
-                    </Pressable>
-                    {index < Object.keys(translations).length - 1 && (
-                      <Text style={styles.langSeparator}> | </Text>
-                    )}
-                  </React.Fragment>
-                ))}
-              </View>
             </View>
           </View>
         )}

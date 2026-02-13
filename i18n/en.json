@@ -6,5 +6,12 @@
     "loadingGrid": "Generating grid...",
     "level": "LEVEL",
     "errorConn": "Unable to create Sudoku. Are you connected to internet?",
-    "success": "Insertion completed successfully!"
+    "success": "Insertion completed successfully!",
+    "settings": "Settings",
+    "selectLanguage": "Select Language",
+    "exit": "Exit",
+    "en": "English",
+    "it": "Italiano",
+    "cn": "简体中文",
+    "jp": "日本語"
 }

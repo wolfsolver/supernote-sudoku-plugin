@@ -4,8 +4,8 @@
     "iconPath":  "./assets/sudoku.png",
     "desc":  "Sudoku Creator\n\nA smooth and powerful plugin for Supernote devices, designed to generate instant Sudoku puzzles and insert them directly into your notes as PNG images.\n\nPowered by Wolfsolver, website: https://github.com/wolfsolver/supernote-sudoku-plugin \nThanks to: https://sudoku-api.vercel.app/ for Sudoku API",
     "name":  "sudoku_creator",
-    "versionCode":  "4",
-    "versionName":  "0.0.4",
+    "versionCode":  "5",
+    "versionName":  "0.0.5",
     "jsMainPath":  "index",
 	"author": "Wolfsolver"
 }

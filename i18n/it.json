@@ -6,5 +6,12 @@
     "loadingGrid": "Generazione griglia...",
     "level": "LIVELLO",
     "errorConn": "Impossibile creare il Sudoku. Sei connesso a internet?",
-    "success": "Inserimento completato con successo!"
-  }
+    "success": "Inserimento completato con successo!",
+    "settings": "Impostazioni",
+    "selectLanguage": "Seleziona Lingua",
+    "exit": "Esci",
+    "en": "Inglese",
+    "it": "Italiano",
+    "cn": "Cinese",
+    "jp": "Giapponese"
+}
