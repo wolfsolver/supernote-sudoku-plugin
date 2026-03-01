@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This is first test. New Plugin with more game here: [Supernote_InkGames](https://github.com/wolfsolver/Supernote_InkGames)
+
 # Supernote Sudoku Maker 🧩
 
 A smooth and high-performance plugin for **Supernote** devices, designed to generate instant Sudoku puzzles and insert them directly into your notes as PNG images.
