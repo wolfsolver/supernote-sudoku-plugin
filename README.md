@@ -1,5 +1,5 @@
 > [!CAUTION]
-> This is first test. New Plugin with more game here: [Supernote_InkGames](https://github.com/wolfsolver/Supernote_InkGames)
+> This is first test. New Plugin with more game here: [Supernote-InkGames](https://github.com/wolfsolver/Supernote-InkGames)
 
 # Supernote Sudoku Maker 🧩
 
